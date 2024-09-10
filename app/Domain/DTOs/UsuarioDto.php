@@ -3,6 +3,8 @@
 namespace App\Domain\DTOs;
 
 use WendellAdriel\ValidatedDTO\ValidatedDTO;
+use Illuminate\Support\Facades\Validator; 
+use Illuminate\Validation\ValidationException;
 
 class UsuarioDto extends ValidatedDTO
 {
@@ -30,12 +32,38 @@ class UsuarioDto extends ValidatedDTO
     {
         return [];
     }
-    public function getCorreo()
+    public function getCorreo():string
     {
         return $this->correo;
     }
-    public function getContraseña()
+    public function getContraseña(): string
     {
         return $this->contraseña;
     }
+    public function setCorreo($correo) : void
+    {
+         $this->correo=$correo;
+    }
+    public function setContraseña($contraseña) : void
+    {
+        $this->contraseña = $contraseña;
+    }
+    public static function from(array $data): self
+    {
+        $instance = new self();
+
+        // Validar los datos
+        $validator = Validator::make($data, self::rules());
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        // Asignar los valores a las propiedades
+        $instance->correo = $data['correo'];
+        $instance->contraseña = $data['contraseña'];
+
+        return $instance;
+    }
+
 }

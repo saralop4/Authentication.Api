@@ -7,7 +7,6 @@ use App\Application\UseCases\LogoutUsuario;
 use App\Application\UseCases\MeUsuario;
 use App\Application\UseCases\RefreshToken;
 use App\Domain\DTOs\UsuarioDto;
-use App\Domain\DTOs\RefreshTokenDto;
 
 class UsuarioService{
 

@@ -11,19 +11,19 @@ use Exception;
 
 class LoginUsuario
 {
-
-
     public function execute(UsuarioDto $usuarioDto)
     {
+        // Acceder a los campos del DTO usando los métodos de acceso
+        $credentials = [
+            'correo' => $usuarioDto->getCorreo(),
+            'contraseña' => $usuarioDto->getContraseña()
+        ];
 
-        $credentials = ['correo' => $usuarioDto->correo, 'password' => $usuarioDto->contraseña];
-
-       try {
-
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return ApiResponse::ResponseError('Usuario no autorizado', 400);
+        try {
+            // Intento de autenticación con las credenciales proporcionadas
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return ApiResponse::ResponseError('Usuario no autorizado', 401);
             }
-
         } catch (ValidationException $ex) {
             $erroresValidaciones = $ex->validator->errors()->toArray();
             return ApiResponse::ResponseError('Error de validación - ' . $ex->getMessage(), 422, $erroresValidaciones);
@@ -33,14 +33,13 @@ class LoginUsuario
             return ApiResponse::ResponseError('No se pudo crear el token - ' . $ex->getMessage(), 500);
         }
 
+        // Respuesta con el nuevo token
         $data = [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60 // EL TOKEN DURA 60 MINUTOS
+            'expires_in' => JWTAuth::factory()->getTTL() * 60, // El token expira en 60 minutos
         ];
 
-        return ApiResponse::ResponseSuccess('token exitoso', 200, $data);
-
+        return ApiResponse::ResponseSuccess('Token exitoso', 200, $data);
     }
-
 }

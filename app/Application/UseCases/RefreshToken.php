@@ -4,33 +4,37 @@ namespace App\Application\UseCases;
 
 use App\Domain\Response\ApiResponse;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use Illuminate\Http\Request;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 
 class RefreshToken
 {
-    public function execute(Request $request)
+    public function execute()
     {
-        // Obtener el token actual del encabezado de la solicitud
-        $token = $request->bearerToken();
-
-        // Verificar si el token está presente
-        if (!$token) {
-            return ApiResponse::ResponseError('Token no proporcionado', 401);
-        }
-
         try {
-            // Refresca el token y obtiene el nuevo token
-            $newToken = JWTAuth::refresh($token);
+            // Obtener el token actual desde el encabezado de la solicitud
+            $token = JWTAuth::getToken();
+
+            // Si no hay token, devolver error
+            if (!$token) {
+                return ApiResponse::ResponseError('Token no proporcionado', 401);
+            }
+
+            // Se refresca el token
+            $nuevoToken = JWTAuth::refresh($token);
+
 
             $data = [
-                'access_token' => $newToken,
+                'access_token' => $nuevoToken,
                 'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60 // EL TOKEN DURA 60 MINUTOS
+                'expires_in' => JWTAuth::factory()->getTTL() * 60, // Tiempo de vida del token en segundos
             ];
 
             return ApiResponse::ResponseSuccess('Token Refrescado', 200, $data);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
+        } catch (TokenInvalidException $e) {
             return ApiResponse::ResponseError('Token inválido', 401);
+        } catch (JWTException $e) {
+            return ApiResponse::ResponseError('No se pudo refrescar el token', 500);
         }
     }
 }

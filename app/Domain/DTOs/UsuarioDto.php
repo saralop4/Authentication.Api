@@ -6,8 +6,8 @@ use WendellAdriel\ValidatedDTO\ValidatedDTO;
 
 class UsuarioDto extends ValidatedDTO
 {
-    public string $correo;
-    public string $contraseña;
+    private string $correo;
+    private string $contraseña;
 
 
     //Este método define las reglas de validación para los datos que se asignan al DTO (Data Transfer Object).
@@ -29,5 +29,13 @@ class UsuarioDto extends ValidatedDTO
     protected function casts(): array
     {
         return [];
+    }
+    public function getCorreo()
+    {
+        return $this->correo;
+    }
+    public function getContraseña()
+    {
+        return $this->contraseña;
     }
 }

@@ -7,7 +7,7 @@ use App\Application\UseCases\LogoutUsuario;
 use App\Application\UseCases\MeUsuario;
 use App\Application\UseCases\RefreshToken;
 use App\Domain\DTOs\UsuarioDto;
-use Illuminate\Http\Request;
+use App\Domain\DTOs\RefreshTokenDto;
 
 class UsuarioService{
 
@@ -44,9 +44,9 @@ class UsuarioService{
         return $this->meUsuario->execute();
     }
 
-    public function refreshToken(Request $request)
+    public function refreshToken()
     {
-        return $this->refreshToken->execute($request);
+        return $this->refreshToken->execute();
     }
 
 }

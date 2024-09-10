@@ -3,11 +3,11 @@
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\DTOs\UsuarioDto;
-use Illuminate\Http\Request;
+use App\Presentation\Http\Controllers\Controller;
 use App\Application\Services\UsuarioService;
 
 
-class AuthenticationController{
+class AuthenticationController extends Controller{
 
     private $usuarioService;
 
@@ -34,9 +34,9 @@ class AuthenticationController{
         return $response;
     }
 
-    public function refreshToken(Request $request)
+    public function refreshToken()
     {
-        $response =  $this->usuarioService->refreshToken($request);
+        $response =  $this->usuarioService->refreshToken();
         return $response;
     }
 
